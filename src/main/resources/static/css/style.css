@@ -41,3 +41,7 @@ hr {
 .row {
     margin-bottom: 15px;
 }
+
+.carousel .slide {
+    background: url("/image/shelf.png");
+}
