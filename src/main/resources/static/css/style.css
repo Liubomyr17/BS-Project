@@ -43,5 +43,18 @@ hr {
 }
 
 .carousel .slide {
-    background: url("/image/shelf.png");
+    background: url("/image/wood.jpg");
+}
+
+.home-headline {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 24px;
+    color: #fff;
+    text-align: center;
+    margin: -13px auto;
+}
+
+.home-headline span {
+    background-color: #231F20;
+    padding: 5px 22px;
 }
