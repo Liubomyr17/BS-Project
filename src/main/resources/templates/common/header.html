@@ -1,6 +1,6 @@
 
 <!doctype html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head th:fragment="common-header">
     <meta charset="utf-8" />
@@ -40,8 +40,9 @@
 
         <ul class="nav navbar-nav navbar-right">
             <li class="nav-item"><a class="nav-link" href="#" data-toggle="tab">SHOPPING CART</a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/login}">MY ACCOUNT</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" data-toggle="tab">LOGOUT</a></li>
+            <li class="nav-item"><a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}">MY ACCOUNT</a></li>
+            <li class="nav-item"><a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/myProfile}">MY ACCOUNT</a></li>
+            <li class="nav-item"><a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" data-toggle="tab">LOGOUT</a></li>
         </ul>
     </div>
 </nav>
