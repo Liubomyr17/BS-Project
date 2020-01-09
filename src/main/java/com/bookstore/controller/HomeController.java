@@ -6,8 +6,11 @@ import com.bookstore.domain.security.Role;
 import com.bookstore.domain.security.UserRole;
 import com.bookstore.service.UserService;
 import com.bookstore.service.impl.UserSecurityService;
+import com.bookstore.utility.MailConstructor;
 import com.bookstore.utility.SecurityUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -24,17 +27,23 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 
 @Controller
 public class HomeController {
 
-    private final UserSecurityService userSecurityService;
+    private final JavaMailSender mailSender;
 
+    private final MailConstructor mailConstructor;
+
+    private final UserSecurityService userSecurityService;
     private final UserService userService;
 
-    public HomeController(UserService userService, UserSecurityService userSecurityService) {
-        this.userService = userService;
+    public HomeController(JavaMailSender mailSender, MailConstructor mailConstructor, UserSecurityService userSecurityService, UserService userService) {
+        this.mailSender = mailSender;
+        this.mailConstructor = mailConstructor;
         this.userSecurityService = userSecurityService;
+        this.userService = userService;
     }
 
     @RequestMapping("/")
@@ -91,7 +100,19 @@ public class HomeController {
         Set<UserRole> userRoles = new HashSet<>();
         userRoles.add(new UserRole(user, role));
         userService.createUser(user, userRoles);
-     }
+
+        String token = UUID.randomUUID().toString();
+        userService.createPasswordResetTokenForUser(user, token);
+
+        String appUrl = "http://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath();
+        SimpleMailMessage email = mailConstructor.constructorResetTokenEmail(appUrl, request.getLocale(), token, user, password);
+
+        mailSender.send(email);
+
+        model.addAttribute("emailSent", "true");
+
+        return "myAccount";
+    }
 
     @RequestMapping("/newUser")
     public String newUser(
